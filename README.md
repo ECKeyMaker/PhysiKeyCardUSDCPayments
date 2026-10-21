@@ -7,6 +7,12 @@ This project was built to provide the market with a supply-chain resistant cold 
 The user experience guides a user through a three-tap account setup with NXP NTAG 213 and 215 tags, including a user PIN / password that operates as a 25th word passphrase, meaning every new PIN / password creates a separate private key. The app creates an ERC-4337 smart account connected to a [Pimlico](https://pimlico.io) paymaster, so the developer can pay the user's gas and the user only ever holds USDC.
 
 > **⚠️ Use at your own risk.** This software handles real funds and has **not** been independently security audited. It is provided as-is under the [MIT License](LICENSE), without warranty of any kind. You are responsible for reviewing the code, testing on Base Sepolia before using mainnet, and for any funds held in wallets it creates. Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+>
+> 
+
+https://github.com/user-attachments/assets/421ff774-1dd8-48eb-aaa3-3848c247b2c2
+
+
 
 ---
 
