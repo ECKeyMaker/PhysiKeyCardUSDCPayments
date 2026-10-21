@@ -1,0 +1,55 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'PhysiKeyCard' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  target 'PhysiKeyCardTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  post_install do |installer|
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    # CatCrypto exposes its module maps relative to $(PODS_TARGET_SRCROOT), which
+    # resolves to the wrong folder inside RNArgon2. Point RNArgon2 at CatCrypto's
+    # module maps directly so Xcode's explicit module builds can find them.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'RNArgon2'
+      target.build_configurations.each do |build_config|
+        build_config.build_settings['SWIFT_INCLUDE_PATHS'] = [
+          '$(inherited)',
+          '"${PODS_ROOT}/CatCrypto/Sources/ModuleMaps/Argon2"',
+          '"${PODS_ROOT}/CatCrypto/Sources/ModuleMaps/MD6"',
+          '"${PODS_ROOT}/CatCrypto/Sources/ModuleMaps/SHA3"',
+        ].join(' ')
+      end
+    end
+  end
+end
