@@ -1,4 +1,4 @@
-# PhysiKey Card
+# PhysiKey Card - Cold Storage / Hot Signer Architecture
 
 A React Native app (iOS and Android) that turns a $0.10 NFC sticker/card into a cold-storage key card for a USDC wallet on [Base](https://base.org).
 
